@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:socialverse/core/configs/page_routers/slide_route.dart';
 import 'package:socialverse/features/videos/providers/video_feed_provider.dart';
+import 'package:socialverse/features/videos/widgets/video_feed_tile.dart';
 
 class VideoFeedScreen extends StatefulWidget {
   const VideoFeedScreen({super.key});
@@ -50,9 +51,11 @@ class _VideoFeedScreenState extends State<VideoFeedScreen> {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       final feed = videoProvider.videoFeedList[index];
-                      return ListTile(
-                        title: Text(feed.username),
-                        subtitle: Text('More videos ${feed.childVideoCount}'),
+                      return VideoFeedTile(
+                        key: Key(feed.id.toString()),
+                        video: feed,
+                        onTap: () {},
+                        horizontalOffset: 2,
                       );
                     },
                   ),

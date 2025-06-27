@@ -25,17 +25,19 @@ class _WeMotionsState extends State<WeMotions> {
     final theme = Provider.of<ThemeProvider>(context);
     return Consumer<ThemeProvider>(
       builder: (_, __, ___) {
-        return MaterialApp(
-          themeMode: __.selectedThemeMode,
-          theme: theme.getTheme(),
-          darkTheme: Constants.darkTheme,
-          navigatorKey: navKey,
-          scaffoldMessengerKey: rootKey,
-          title: 'WeMotions',
-          debugShowCheckedModeBanner: false,
-          onGenerateRoute: CustomRouter.onGenerateRoute,
-          // initialRoute: logged_in! ? BottomNavBar.routeName : WelcomeScreen.routeName,
-          initialRoute: VideoFeedScreen.routeName,
+        return ScreenUtilInit(
+          child: MaterialApp(
+            themeMode: __.selectedThemeMode,
+            theme: theme.getTheme(),
+            darkTheme: Constants.darkTheme,
+            navigatorKey: navKey,
+            scaffoldMessengerKey: rootKey,
+            title: 'WeMotions',
+            debugShowCheckedModeBanner: false,
+            onGenerateRoute: CustomRouter.onGenerateRoute,
+            // initialRoute: logged_in! ? BottomNavBar.routeName : WelcomeScreen.routeName,
+            initialRoute: VideoFeedScreen.routeName,
+          ),
         );
       },
     );
