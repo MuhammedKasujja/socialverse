@@ -1,30 +1,30 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
 import '../domain/services/video_feed_service.dart';
 
 class VideoFeedRepliesProvider extends ChangeNotifier {
-  late List<VideoFeedModel> _videoFeedList;
-
+  final Map<String, List<VideoFeedModel>> _videoRepliesList = {};
   final notification = getIt<NotificationProvider>();
 
   final _service = ViedoFeedService(dio: getIt<Dio>());
 
   bool _loading = false;
   bool get loading => _loading;
-  List<VideoFeedModel> get videoFeedList => _videoFeedList;
 
   Future<void> fetchVideoFeedReplies({required int videoId}) async {
-    log('init');
     _loading = true;
     notifyListeners();
 
     try {
-      final videoFeedList = await _service.fetchVideoFeedReplies(
-          videoId: videoId, page: 1, pageSize: 5);
+      final videoReplies = await _service.fetchVideoFeedReplies(
+        videoId: videoId,
+        page: 1,
+        pageSize: 5,
+      );
 
-      _videoFeedList = videoFeedList;
+      _videoRepliesList.addAll({'$videoId': videoReplies});
+      notifyListeners();
     } catch (e) {
       notification.show(
         title: 'Something went wrong',

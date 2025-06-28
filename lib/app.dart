@@ -37,6 +37,7 @@ class _WeMotionsState extends State<WeMotions> {
             onGenerateRoute: CustomRouter.onGenerateRoute,
             // initialRoute: logged_in! ? BottomNavBar.routeName : WelcomeScreen.routeName,
             initialRoute: VideoFeedScreen.routeName,
+            // home: Manual2DPageView(),
           ),
         );
       },

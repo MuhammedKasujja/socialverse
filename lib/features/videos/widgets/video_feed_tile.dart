@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
@@ -8,17 +5,7 @@ import 'package:socialverse/features/videos/domain/models/video_feed_model.dart'
 class VideoFeedTile extends StatefulWidget {
   final VideoFeedModel video;
   final VoidCallback onTap;
-  final bool isSuperLiked;
-  final int horizontalOffset;
-  final bool isFromSwipeMagic;
-  const VideoFeedTile({
-    super.key,
-    required this.video,
-    required this.onTap,
-    required this.horizontalOffset,
-    this.isSuperLiked = false,
-    this.isFromSwipeMagic = false,
-  });
+  const VideoFeedTile({super.key, required this.video, required this.onTap});
 
   @override
   State<VideoFeedTile> createState() => _VideoFeedTileState();
@@ -27,72 +14,186 @@ class VideoFeedTile extends StatefulWidget {
 class _VideoFeedTileState extends State<VideoFeedTile> {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return GestureDetector(
+      onPanUpdate: (details) {
+        // Swiping in right direction
+        if (details.delta.dx > 10) {
+          print("Swiped Right");
+        }
+
+        // Swiping in left direction
+        if (details.delta.dx < -10) {
+          print("Swiped Left");
+        }
+
+        // Swiping in down direction
+        if (details.delta.dy > 10) {
+          print("Swiped Down");
+        }
+
+        // Swiping in up direction
+        if (details.delta.dy < -10) {
+          print("Swiped Up");
+        }
+      },
       child: Stack(
         children: [
-          SizedBox(
-            height: 650.h,
-            child: CachedNetworkImage(
-              imageUrl: widget.video.thumbnailUrl,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
+          PageTile(itemId: widget.video.id),
+          // SizedBox(
+          //   height: 650.h,
+          //   child: CachedNetworkImage(
+          //     imageUrl: widget.video.thumbnailUrl,
+          //     imageBuilder: (context, imageProvider) => Container(
+          //       decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(20),
+          //         image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          Positioned(
+            bottom: 40,
+            right: 20,
+            child: DotIndicator(video: widget.video),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DotIndicator extends StatelessWidget {
+  const DotIndicator({super.key, required this.video});
+
+  static const double dotSize = 22.0;
+  static const double distance = 28.0;
+  final VideoFeedModel video;
+
+  Widget _buildDot(Color color, {String? text}) {
+    return Container(
+      width: dotSize,
+      height: dotSize,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      child: text != null ? Center(child: Text(text)) : null,
+    );
+  }
+
+  Widget _centerIndicator(BuildContext context) {
+    return _buildDot(Theme.of(context).colorScheme.primary);
+  }
+
+  Widget _textIndicator(String? text) {
+    return _buildDot(Colors.white, text: text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: distance * 2 + dotSize,
+      height: distance * 2 + dotSize,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Center dot
+          _centerIndicator(context),
+
+          // Top dot
+          Positioned(
+            top: 0,
+            child: _textIndicator(video.isChildVideo ? 'H' : null),
+          ),
+
+          // Bottom dot
+          Positioned(bottom: 0, child: _textIndicator('3')),
+
+          // Left dot
+          Positioned(left: 0, child: _textIndicator('P')),
+
+          // Right dot
+          Positioned(
+            right: 0,
+            child: _textIndicator(
+              video.isParentVideo ? video.childVideoCount.toString() : '',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PageTile extends StatefulWidget {
+  final int itemId;
+  const PageTile({super.key, required this.itemId});
+
+  @override
+  State<PageTile> createState() => _PageTileState();
+}
+
+class _PageTileState extends State<PageTile> {
+  late List<String> pages;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Show the first page immediately
+    pages = ["Tile ${widget.itemId} - Page 0"];
+
+    // Then fetch and add more
+    _fetchMorePages();
+  }
+
+  Future<void> _fetchMorePages() async {
+    await Future.delayed(Duration(milliseconds: 10_000));
+    final more = List.generate(
+      4,
+      (i) => "Tile ${widget.itemId} - Page ${i + 1}",
+    );
+    if (mounted) {
+      setState(() {
+        pages.addAll(more); // Append more items
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 650.h,
+          child: Card(
+            margin: const EdgeInsets.all(12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: PageView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: pages.length,
+              controller: PageController(viewportFraction: 0.85),
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 16,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.teal[300 + ((index % 3) * 100)],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Center(
+                    child: Text(
+                      pages[index],
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-          if (widget.horizontalOffset > 0)
-            Positioned(
-              top: 25,
-              left: 25,
-              child: Opacity(
-                opacity: min(((widget.horizontalOffset) / 100), 1),
-                child: Container(
-                  height: 40,
-                  width: 90,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.teal,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Right',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          if (widget.horizontalOffset < 0)
-            Positioned(
-              top: 25,
-              right: 25,
-              child: Opacity(
-                opacity: min((widget.horizontalOffset * -1) / 100, 1),
-                child: Container(
-                  height: 40,
-                  width: 100,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Left',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
