@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
+import 'package:socialverse/core/utils/logger/logger.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
 
@@ -19,10 +18,8 @@ class ViedoFeedService {
     try {
       Response response = await _dio.get(
         'https://api.wemotions.app/feed?page=$page&page_size=$pageSize',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
       );
-      print(response.data);
-      print(response.statusCode);
+      logger.info(response.data);
       // if (response.data['status'] == 'success') {
       //   if (response.statusCode == 200 || response.statusCode == 201) {
       //     String jsonString = json.encode(response.data);
@@ -44,13 +41,12 @@ class ViedoFeedService {
       final list =
           (response.data['posts'] as List).map((json) => VideoFeedModel.fromJson(json));
       return list.toList();
-    } on DioError catch (e) {
-      log('${e.response?.data}');
-      print(e.response?.data);
-
+    } on DioException catch (e) {
+      logger.error(e.message);
+      logger.error(e.type);
       throw 'Something Went Wrong';
     } catch (error) {
-      log('${error}');
+      logger.error(error);
       throw 'Something Went Wrong';
     }
   }
