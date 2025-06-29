@@ -3,6 +3,7 @@ import 'package:socialverse/features/videos/domain/models/video_feed_model.dart'
 
 class PostRegistryProvider extends ChangeNotifier {
   final Map<String, VideoFeedModel> _visitedNodes = {};
+  VideoFeedModel? _activePost;
 
   int _verticalIndex = 0;
   int _horizontalIndex = 0;
@@ -11,12 +12,18 @@ class PostRegistryProvider extends ChangeNotifier {
 
   int get verticalIndex => _verticalIndex;
 
+  VideoFeedModel? get activePost => _activePost;
+
   void onVerticalScroll(int verticalIndex) {
     _verticalIndex = verticalIndex;
   }
 
   void onHorizontalScroll(int horizontalIndex) {
     _horizontalIndex = horizontalIndex;
+  }
+
+  void setActivePost(VideoFeedModel post) {
+    _activePost = post;
   }
 
   void onScroll({required VideoFeedModel video}) {

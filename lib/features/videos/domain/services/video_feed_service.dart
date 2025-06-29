@@ -15,16 +15,16 @@ class ViedoFeedService {
     required int pageSize,
   }) async {
     try {
-      // Response response = await _dio.get(
-      //   'https://api.wemotions.app/feed?page=$page&page_size=$pageSize',
-      // );
-      // logger.info(response.data);
-      // final list = (response.data['posts'] as List).map(
-      //   (json) => VideoFeedModel.fromJson(json),
-      // );
-      final list = (_parentVideos['posts'] as List).map(
+      Response response = await _dio.get(
+        'https://api.wemotions.app/feed?page=$page&page_size=$pageSize',
+      );
+      logger.info(response.data);
+      final list = (response.data['posts'] as List).map(
         (json) => VideoFeedModel.fromJson(json),
       );
+      // final list = (_parentVideos['posts'] as List).map(
+      //   (json) => VideoFeedModel.fromJson(json),
+      // );
       return list.toList();
     } on DioException catch (e) {
       logger.error(e.message);
@@ -43,18 +43,18 @@ class ViedoFeedService {
   }) async {
     // print('${API.endpoint}${API.profile}/$videoId');
     try {
-      // Response response = await _dio.get(
-      //   'https://api.wemotions.app/posts/$videoId/replies?page=$page&page_size=$pageSize',
-      // );
-      // print(response.data);
-      // final list = (response.data as List).map(
-      //   (json) => VideoFeedModel.fromJson(json),
-      // );
-      final list = (_repliesFor218['post'] as List).map(
+      Response response = await _dio.get(
+        'https://api.wemotions.app/posts/$videoId/replies?page=$page&page_size=$pageSize',
+      );
+      logger.info(response.data);
+      final list = (response.data['post'] as List).map(
         (json) => VideoFeedModel.fromJson(json),
       );
+      // final list = (_repliesFor218['post'] as List).map(
+      //   (json) => VideoFeedModel.fromJson(json),
+      // );
       return list.toList();
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
 
@@ -470,6 +470,138 @@ Map<String, dynamic> get _repliesFor218 => {
     },
     {
       "id": 376,
+      "category": [],
+      "slug": "82fe2ee729cc6025c9c6a43465fc5c89f200f07b",
+      "parent_video_id": 218,
+      "child_video_count": 0,
+      "title": "Reply test 1",
+      "identifier": "on2wMrP",
+      "comment_count": 0,
+      "upvote_count": 0,
+      "view_count": 3,
+      "share_count": 0,
+      "tag_count": 0,
+      "video_link":
+          "https://video-cdn.wemotions.app/arunn04_bc53f806-bfcf-49c3-91a9-08b51711ebfa.mp4",
+      "is_locked": false,
+      "created_at": 1750847977000,
+      "first_name": "Arun",
+      "last_name": "Kumar",
+      "username": "arunn04",
+      "replier_type": "new_user",
+      "no_of_replies": 0,
+      "avg_reply_min": 0,
+      "upvoted": false,
+      "bookmarked": false,
+      "thumbnail_url":
+          "https://video-cdn.wemotions.app/arunn04_bc53f806-bfcf-49c3-91a9-08b51711ebfa.0000002.jpg",
+      "following": false,
+      "picture_url": "https://assets.wemotions.app/profile/14.png",
+      "voting_count": 0,
+      "votings": [],
+      "tags": [],
+    },
+    {
+      "id": 369,
+      "category": [],
+      "slug": "959c2e5fb2006717aaef4f3b56347907ee3fc3f6",
+      "parent_video_id": 232,
+      "child_video_count": 2,
+      "title": "testing reply",
+      "identifier": "cKUO5YS",
+      "comment_count": 0,
+      "upvote_count": 0,
+      "view_count": 0,
+      "share_count": 0,
+      "tag_count": 0,
+      "video_link":
+          "https://video-cdn.wemotions.app/arshasss_f3457c5a-0f8c-45d7-8e76-6b27349a8775.mp4",
+      "is_locked": false,
+      "created_at": 1750758263000,
+      "first_name": "Arsh",
+      "last_name": "Shift",
+      "username": "arshasss",
+      "replier_type": "new_user",
+      "no_of_replies": 0,
+      "avg_reply_min": 0,
+      "upvoted": false,
+      "bookmarked": false,
+      "thumbnail_url":
+          "https://video-cdn.wemotions.app/arshasss_f3457c5a-0f8c-45d7-8e76-6b27349a8775.0000002.jpg",
+      "following": false,
+      "picture_url": "https://assets.wemotions.app/profile/2.png",
+      "voting_count": 0,
+      "votings": [],
+      "tags": [],
+    },
+    {
+      "id": 789,
+      "category": [],
+      "slug": "82fe2ee729cc6025c9c6a43465fc5c89f200f07b",
+      "parent_video_id": 218,
+      "child_video_count": 0,
+      "title": "Reply test 1",
+      "identifier": "on2wMrP",
+      "comment_count": 0,
+      "upvote_count": 0,
+      "view_count": 3,
+      "share_count": 0,
+      "tag_count": 0,
+      "video_link":
+          "https://video-cdn.wemotions.app/arunn04_bc53f806-bfcf-49c3-91a9-08b51711ebfa.mp4",
+      "is_locked": false,
+      "created_at": 1750847977000,
+      "first_name": "Arun",
+      "last_name": "Kumar",
+      "username": "arunn04",
+      "replier_type": "new_user",
+      "no_of_replies": 0,
+      "avg_reply_min": 0,
+      "upvoted": false,
+      "bookmarked": false,
+      "thumbnail_url":
+          "https://video-cdn.wemotions.app/arunn04_bc53f806-bfcf-49c3-91a9-08b51711ebfa.0000002.jpg",
+      "following": false,
+      "picture_url": "https://assets.wemotions.app/profile/14.png",
+      "voting_count": 0,
+      "votings": [],
+      "tags": [],
+    },
+    {
+      "id": 890,
+      "category": [],
+      "slug": "82fe2ee729cc6025c9c6a43465fc5c89f200f07b",
+      "parent_video_id": 218,
+      "child_video_count": 0,
+      "title": "Reply test 1",
+      "identifier": "on2wMrP",
+      "comment_count": 0,
+      "upvote_count": 0,
+      "view_count": 3,
+      "share_count": 0,
+      "tag_count": 0,
+      "video_link":
+          "https://video-cdn.wemotions.app/arunn04_bc53f806-bfcf-49c3-91a9-08b51711ebfa.mp4",
+      "is_locked": false,
+      "created_at": 1750847977000,
+      "first_name": "Arun",
+      "last_name": "Kumar",
+      "username": "arunn04",
+      "replier_type": "new_user",
+      "no_of_replies": 0,
+      "avg_reply_min": 0,
+      "upvoted": false,
+      "bookmarked": false,
+      "thumbnail_url":
+          "https://video-cdn.wemotions.app/arunn04_bc53f806-bfcf-49c3-91a9-08b51711ebfa.0000002.jpg",
+      "following": false,
+      "picture_url": "https://assets.wemotions.app/profile/14.png",
+      "voting_count": 0,
+      "votings": [],
+      "tags": [],
+    },
+    {
+      "id": 567,
       "category": [],
       "slug": "82fe2ee729cc6025c9c6a43465fc5c89f200f07b",
       "parent_video_id": 218,

@@ -123,7 +123,7 @@ class _VideoFeedScreenState extends State<VideoFeedScreen> {
                   return VideoFeedTile(
                     // key: Key(feed.id.toString()),
                     post: feed,
-                    onTap: () {},
+                    index: index,
                   );
                   // return SizedBox(
                   //   height: 650.h, // height for each swiper tile

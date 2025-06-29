@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
+import 'package:socialverse/features/videos/providers/post_registry_provider.dart';
 
-class VideoFeedTile extends StatelessWidget {
+class VideoFeedTile extends StatefulWidget {
   final VideoFeedModel post;
-  final VoidCallback? onTap;
-  const VideoFeedTile({super.key, required this.post, this.onTap});
+  final int index;
+  const VideoFeedTile({super.key, required this.post, required this.index});
+
+  @override
+  State<VideoFeedTile> createState() => _VideoFeedTileState();
+}
+
+class _VideoFeedTileState extends State<VideoFeedTile> {
+  @override
+  void initState() {
+    Provider.of<PostRegistryProvider>(
+      context,
+      listen: false,
+    ).setActivePost(widget.post);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +64,12 @@ class VideoFeedTile extends StatelessWidget {
                 spacing: 12,
                 children: [
                   Text(
-                    'Post ID: ${post.id}',
+                    'Post ID: ${widget.post.id}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
-                  Text(post.fullName),
-                  Text(post.slug),
-                  Text(post.identifier),
+                  Text(widget.post.fullName),
+                  Text(widget.post.slug),
+                  Text(widget.post.identifier),
                 ],
               ),
             ),
@@ -72,7 +88,11 @@ class VideoFeedTile extends StatelessWidget {
           //     ),
           //   ),
           // ),
-          Positioned(bottom: 40, right: 20, child: DotIndicator(video: post)),
+          Positioned(
+            bottom: 40,
+            right: 20,
+            child: DotIndicator(video: widget.post, position: widget.index),
+          ),
         ],
       ),
     );
@@ -80,7 +100,8 @@ class VideoFeedTile extends StatelessWidget {
 }
 
 class DotIndicator extends StatelessWidget {
-  const DotIndicator({super.key, required this.video});
+  const DotIndicator({super.key, required this.video, required this.position});
+  final int position;
 
   static const double dotSize = 22.0;
   static const double distance = 28.0;
@@ -121,7 +142,8 @@ class DotIndicator extends StatelessWidget {
           ),
 
           // Bottom dot
-          Positioned(bottom: 0, child: _textIndicator('3')),
+          if (position > 0)
+            Positioned(bottom: 0, child: _textIndicator(position.toString())),
 
           // Left dot
           if (!video.isGrandPost)

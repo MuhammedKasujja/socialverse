@@ -3,14 +3,30 @@ import 'dart:math' as math;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:socialverse/core/utils/logger/logger.dart';
 import 'package:socialverse/features/home/helper/v_video_scroll_physics.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
+import 'package:socialverse/features/videos/providers/post_registry_provider.dart';
 import 'package:socialverse/features/videos/providers/video_feed_provider.dart';
 import 'package:socialverse/features/videos/widgets/video_feed_tile.dart';
 
-class VerticalFeedList extends StatelessWidget {
+class VerticalFeedList extends StatefulWidget {
   const VerticalFeedList({super.key, required this.posts});
   final List<VideoFeedModel> posts;
+
+  @override
+  State<VerticalFeedList> createState() => _VerticalFeedListState();
+}
+
+class _VerticalFeedListState extends State<VerticalFeedList> {
+  @override
+  void initState() {
+    Provider.of<PostRegistryProvider>(
+      context,
+      listen: false,
+    ).setActivePost(widget.posts.first);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +34,9 @@ class VerticalFeedList extends StatelessWidget {
       body: PageView.builder(
         scrollDirection: Axis.vertical,
         physics: VideoScrollPhysics(),
-        itemCount: posts.length,
+        itemCount: widget.posts.length,
         itemBuilder: (context, index) {
-          return FourWaySwipeHandler(index: index, post: posts[index]);
+          return FourWaySwipeHandler(index: index, post: widget.posts[index]);
         },
       ),
     );
@@ -54,13 +70,17 @@ class _FourWaySwipeHandlerState extends State<FourWaySwipeHandler> {
   }
 
   void _setAxis(Axis axis) {
+    final activePost = context.read<PostRegistryProvider>().activePost;
+    // logger.info({'Change direction': activePost?.id, 'Axis': axis});
+    if (axis == Axis.vertical && !activePost!.hasReplies) return;
     if (_lockedAxis != axis) {
       setState(() => _lockedAxis = axis);
-      if (axis == Axis.vertical) {
+      if (axis == Axis.vertical && activePost!.hasReplies) {
+        // final activePost = context.read<PostRegistryProvider>().activePost;
         Provider.of<VideoFeedProvider>(
           context,
           listen: false,
-        ).fetchPostReplies(post: widget.post);
+        ).fetchPostReplies(post: activePost);
       }
     }
   }
@@ -68,9 +88,12 @@ class _FourWaySwipeHandlerState extends State<FourWaySwipeHandler> {
   @override
   Widget build(BuildContext context) {
     final post = widget.post;
+    // always load the current active post
+    final activePost = context.watch<PostRegistryProvider>().activePost;
+    logger.debug(activePost?.toJson());
     return Consumer<VideoFeedProvider>(
       builder: (context, provider, _) {
-        final postState = provider.getPostState(post);
+        final postState = provider.getPostState(activePost!);
         return RawGestureDetector(
           gestures: {
             CustomDirectionRecognizer:
@@ -87,9 +110,13 @@ class _FourWaySwipeHandlerState extends State<FourWaySwipeHandler> {
                   posts: [post, ...postState?.getChildPosts() ?? []],
                   scrollDirection: Axis.horizontal,
                 )
+              // :PostListView(
+              //   posts: [post, ...postState?.getChildPosts() ?? []],
+              //   scrollDirection: Axis.vertical,
+              // )
               : VerticalDetailsView(
                   index: widget.index,
-                  posts: [post, ...postState?.getPostReplies() ?? []],
+                  posts: postState?.getPostReplies() ?? [],
                 ),
         );
       },
@@ -172,20 +199,20 @@ class VerticalDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return PageView.builder(
-    //   scrollDirection: Axis.vertical ,
-    //   itemCount: 2,
-    //   physics: VideoScrollPhysics(),
-    //   itemBuilder: (_, i) {
-    //     return Center(
-    //       child: Text(
-    //         'Vertical Detail View $index\n(Swipe horizontal to go back) ${i+1}',
-    //         textAlign: TextAlign.center,
-    //         style: TextStyle(fontSize: 22),
-    //       ),
-    //     );
-    //   },
-    // );
+    return PageView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: posts.length,
+      physics: VideoScrollPhysics(),
+      itemBuilder: (_, i) {
+        return Center(
+          child: Text(
+            'Vertical Detail View $index\n(Swipe horizontal to go back) ${i + 1}\n PostID: ${posts[i].id}',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22),
+          ),
+        );
+      },
+    );
 
     return Center(
       child: Text(
@@ -249,7 +276,11 @@ class PostListView extends StatelessWidget {
       itemCount: posts.length,
       physics: VideoScrollPhysics(),
       itemBuilder: (_, index) {
-        return VideoFeedTile(post: posts[index]);
+        final post = posts[index];
+        final count = post.isGrandPost
+            ? posts.length - index
+            : post.totalReplies ?? 0;
+        return VideoFeedTile(post: post, index: count);
       },
     );
   }

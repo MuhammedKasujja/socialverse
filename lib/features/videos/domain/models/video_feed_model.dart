@@ -122,7 +122,7 @@ class VideoFeedModel {
   bool get hasMoreVideoFeed => childVideoCount > 0;
   bool get isParentVideo => parentVideoId == null;
   bool get isChildVideo => parentVideoId != null;
-  bool get isVideoReply => totalReplies != null;
+  bool get hasReplies => totalReplies != null;
   bool get hasChildren => childVideoCount > 0;
   bool get isGrandPost => parentVideoId == null;
 

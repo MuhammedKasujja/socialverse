@@ -117,18 +117,19 @@ class VideoFeedProvider extends ChangeNotifier {
         page: 1,
         pageSize: 5,
       );
-      final videoReplies = selectRandomItems(posts, post.childVideoCount);
+      // final videoReplies = selectRandomItems(posts, post.childVideoCount);
       if (_postRepliesList.containsKey(post.id.toString())) {
         final postState = _postRepliesList[postId]!;
-        postState.copyWith(childPosts: videoReplies);
+        postState.copyWith(childPosts: posts);
         _postRepliesList[postId] = postState;
       } else {
         _postRepliesList[postId] = PostState(
           post: post,
-          childPosts: videoReplies,
+          childPosts: posts,
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      logger.error({e,stackTrace});
       notification.show(
         title: 'Something went wrong',
         type: NotificationType.local,
@@ -148,16 +149,16 @@ class VideoFeedProvider extends ChangeNotifier {
         page: 1,
         pageSize: 5,
       );
-      final generatedReplies = selectRandomItems(posts, post.totalReplies ?? 0);
+      // final generatedReplies = selectRandomItems(posts, post.totalReplies ?? 0);
       final postId = post.id.toString();
       if (_postRepliesList.containsKey(post.id.toString())) {
         final postState = _postRepliesList[postId]!;
-        postState.copyWith(postReplies: generatedReplies);
+        postState.copyWith(postReplies: posts);
         _postRepliesList[postId] = postState;
       } else {
         _postRepliesList[postId] = PostState(
           post: post,
-          postReplies: generatedReplies,
+          postReplies: posts,
         );
       }
     } catch (e) {
