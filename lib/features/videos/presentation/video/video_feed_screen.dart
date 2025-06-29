@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:socialverse/core/configs/page_routers/slide_route.dart';
 import 'package:socialverse/core/utils/logger/logger.dart';
 import 'package:socialverse/export.dart';
+import 'package:socialverse/features/videos/providers/post_registry_provider.dart';
 import 'package:socialverse/features/videos/providers/video_feed_provider.dart';
 import 'package:socialverse/features/videos/widgets/video_feed_tile.dart';
 
@@ -50,24 +52,42 @@ class _VideoFeedScreenState extends State<VideoFeedScreen> {
           scrollDirection: Axis.vertical,
           itemCount: 3, // Up/Down Pages
           onPageChanged: (verticalPage) {
-            logger.info({"VertPage":verticalPage});
+            // logger.info({"VertPage": verticalPage});
+            context.read<PostRegistryProvider>().onVerticalScroll(verticalPage);
           },
           itemBuilder: (context, verticalIndex) {
             return PageView.builder(
               scrollDirection: scrollDirection,
               itemCount: 4, // Left/Right Pages
               onPageChanged: (page) {
-                logger.info({'HoriPage':page});
+                // logger.info({'HoriPage': page});
+                context.read<PostRegistryProvider>().onHorizontalScroll(page);
               },
               itemBuilder: (context, horizontalIndex) {
-                return Container(
-                  color:
-                      Colors.primaries[(verticalIndex * 3 + horizontalIndex) %
-                          Colors.primaries.length],
-                  child: Center(
-                    child: Text(
-                      'Page ($verticalIndex, $horizontalIndex)',
-                      style: const TextStyle(fontSize: 32, color: Colors.white),
+                if (horizontalIndex == 0) {
+                  return Container(
+                    color: Theme.of(context).colorScheme.primary,
+                    child: Center(
+                      child: Text(
+                        'Page ($verticalIndex, $horizontalIndex)',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return RawGestureDetector(
+                  child: Container(
+                    color:
+                        Colors.primaries[(verticalIndex * 3 + horizontalIndex) %
+                            Colors.primaries.length],
+                    child: Center(
+                      child: Text(
+                        'Page ($verticalIndex, $horizontalIndex)',
+                        style: const TextStyle(fontSize: 32, color: Colors.white),
+                      ),
                     ),
                   ),
                 );
@@ -300,3 +320,47 @@ class _Manual2DPageViewState extends State<Manual2DPageView> {
     );
   }
 }
+
+class CustomPanGestureRegognizer extends OneSequenceGestureRecognizer {
+  final Function onPanDown;
+  final Function onPanUpdate;
+  final Function onPanEnd;
+
+  CustomPanGestureRegognizer({
+    super.debugOwner,
+    super.supportedDevices,
+    super.allowedButtonsFilter,
+    required this.onPanDown,
+    required this.onPanUpdate,
+    required this.onPanEnd,
+  });
+
+  @override
+  void addPointer(PointerEvent event) {
+    if (onPanDown(event.position)) {
+      startTrackingPointer(event.pointer);
+      resolve(GestureDisposition.accepted);
+    } else {
+      stopTrackingPointer(event.pointer);
+    }
+  }
+
+  @override
+  String get debugDescription => 'customPan';
+
+  @override
+  void didStopTrackingLastPointer(int pointer) {}
+
+  @override
+  void handleEvent(PointerEvent event) {
+    if (event is PointerMoveEvent) {
+      onPanUpdate(event.position);
+    }
+    if (event is PointerUpEvent) {
+      onPanEnd(event.position);
+      stopTrackingPointer(event.pointer);
+    }
+  }
+}
+
+

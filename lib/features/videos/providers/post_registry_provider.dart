@@ -1,8 +1,23 @@
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
 
-class VideoRegistry extends ChangeNotifier {
+class PostRegistryProvider extends ChangeNotifier {
   final Map<String, VideoFeedModel> _visitedNodes = {};
+
+  int _verticalIndex = 0;
+  int _horizontalIndex = 0;
+
+  int get horizontalIndex => _horizontalIndex;
+
+  int get verticalIndex => _verticalIndex;
+
+  void onVerticalScroll(int verticalIndex) {
+    _verticalIndex = verticalIndex;
+  }
+
+  void onHorizontalScroll(int horizontalIndex) {
+    _horizontalIndex = horizontalIndex;
+  }
 
   void onScroll({required VideoFeedModel video}) {
     _addVideoToNodeList(video);

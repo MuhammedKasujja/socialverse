@@ -1,3 +1,4 @@
+import 'package:socialverse/features/videos/providers/post_registry_provider.dart';
 import 'package:socialverse/features/videos/providers/video_feed_provider.dart';
 
 import 'export.dart';
@@ -81,6 +82,7 @@ void main() async {
           ChangeNotifierProvider(create: (_) => ReportProvider()),
           ChangeNotifierProvider(create: (_) => NotificationProvider()),
           ChangeNotifierProvider(create: (_) => VideoFeedProvider()),
+          ChangeNotifierProvider(create: (_) => PostRegistryProvider()),
           ChangeNotifierProvider<ThemeProvider>(
             create: (_) => ThemeProvider(
               value ? Constants.darkTheme : Constants.lightTheme,
