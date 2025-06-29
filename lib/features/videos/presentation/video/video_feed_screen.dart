@@ -6,6 +6,8 @@ import 'package:socialverse/features/videos/providers/post_registry_provider.dar
 import 'package:socialverse/features/videos/providers/video_feed_provider.dart';
 import 'package:socialverse/features/videos/widgets/video_feed_tile.dart';
 
+import '../dynamic_video_screen.dart';
+
 class VideoFeedScreen extends StatefulWidget {
   const VideoFeedScreen({super.key});
   static const String routeName = '/video-feed';
@@ -56,43 +58,44 @@ class _VideoFeedScreenState extends State<VideoFeedScreen> {
             context.read<PostRegistryProvider>().onVerticalScroll(verticalPage);
           },
           itemBuilder: (context, verticalIndex) {
-            return PageView.builder(
-              scrollDirection: scrollDirection,
-              itemCount: 4, // Left/Right Pages
-              onPageChanged: (page) {
-                // logger.info({'HoriPage': page});
-                context.read<PostRegistryProvider>().onHorizontalScroll(page);
-              },
-              itemBuilder: (context, horizontalIndex) {
-                if (horizontalIndex == 0) {
-                  return Container(
-                    color: Theme.of(context).colorScheme.primary,
-                    child: Center(
-                      child: Text(
-                        'Page ($verticalIndex, $horizontalIndex)',
-                        style: const TextStyle(
-                          fontSize: 32,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return RawGestureDetector(
-                  child: Container(
-                    color:
-                        Colors.primaries[(verticalIndex * 3 + horizontalIndex) %
-                            Colors.primaries.length],
-                    child: Center(
-                      child: Text(
-                        'Page ($verticalIndex, $horizontalIndex)',
-                        style: const TextStyle(fontSize: 32, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
+            return DynamicScrollPageView();
+            // return PageView.builder(
+            //   scrollDirection: scrollDirection,
+            //   itemCount: 4, // Left/Right Pages
+            //   onPageChanged: (page) {
+            //     // logger.info({'HoriPage': page});
+            //     context.read<PostRegistryProvider>().onHorizontalScroll(page);
+            //   },
+            //   itemBuilder: (context, horizontalIndex) {
+            //     if (horizontalIndex == 0) {
+            //       return Container(
+            //         color: Theme.of(context).colorScheme.primary,
+            //         child: Center(
+            //           child: Text(
+            //             'Page ($verticalIndex, $horizontalIndex)',
+            //             style: const TextStyle(
+            //               fontSize: 32,
+            //               color: Colors.white,
+            //             ),
+            //           ),
+            //         ),
+            //       );
+            //     }
+            //     return RawGestureDetector(
+            //       child: Container(
+            //         color:
+            //             Colors.primaries[(verticalIndex * 3 + horizontalIndex) %
+            //                 Colors.primaries.length],
+            //         child: Center(
+            //           child: Text(
+            //             'Page ($verticalIndex, $horizontalIndex)',
+            //             style: const TextStyle(fontSize: 32, color: Colors.white),
+            //           ),
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // );
           },
         ),
       ),
@@ -119,7 +122,7 @@ class _VideoFeedScreenState extends State<VideoFeedScreen> {
                   final feed = videoProvider.videoFeedList[index];
                   return VideoFeedTile(
                     // key: Key(feed.id.toString()),
-                    video: feed,
+                    post: feed,
                     onTap: () {},
                   );
                   // return SizedBox(

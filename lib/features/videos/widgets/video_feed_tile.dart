@@ -2,16 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
 
-class VideoFeedTile extends StatefulWidget {
-  final VideoFeedModel video;
-  final VoidCallback onTap;
-  const VideoFeedTile({super.key, required this.video, required this.onTap});
+class VideoFeedTile extends StatelessWidget {
+  final VideoFeedModel post;
+  final VoidCallback? onTap;
+  const VideoFeedTile({super.key, required this.post, this.onTap});
 
-  @override
-  State<VideoFeedTile> createState() => _VideoFeedTileState();
-}
-
-class _VideoFeedTileState extends State<VideoFeedTile> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -38,7 +33,33 @@ class _VideoFeedTileState extends State<VideoFeedTile> {
       },
       child: Stack(
         children: [
-          PageTile(itemId: widget.video.id),
+          SizedBox(
+            height: double.maxFinite,
+            // height: 650.h,
+            width: double.maxFinite,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.teal.shade300,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 12,
+                children: [
+                  Text(
+                    'Post ID: ${post.id}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  Text(post.fullName),
+                  Text(post.slug),
+                  Text(post.identifier),
+                ],
+              ),
+            ),
+          ),
+
+          // PageTile(itemId: widget.video.id),
           // SizedBox(
           //   height: 650.h,
           //   child: CachedNetworkImage(
@@ -51,11 +72,7 @@ class _VideoFeedTileState extends State<VideoFeedTile> {
           //     ),
           //   ),
           // ),
-          Positioned(
-            bottom: 40,
-            right: 20,
-            child: DotIndicator(video: widget.video),
-          ),
+          Positioned(bottom: 40, right: 20, child: DotIndicator(video: post)),
         ],
       ),
     );
@@ -107,15 +124,17 @@ class DotIndicator extends StatelessWidget {
           Positioned(bottom: 0, child: _textIndicator('3')),
 
           // Left dot
-          Positioned(left: 0, child: _textIndicator('P')),
+          if (!video.isGrandPost)
+            Positioned(left: 0, child: _textIndicator('P')),
 
           // Right dot
-          Positioned(
-            right: 0,
-            child: _textIndicator(
-              video.isParentVideo ? video.childVideoCount.toString() : '',
+          if (video.hasChildren)
+            Positioned(
+              right: 0,
+              child: _textIndicator(
+                video.isParentVideo ? video.childVideoCount.toString() : '',
+              ),
             ),
-          ),
         ],
       ),
     );
