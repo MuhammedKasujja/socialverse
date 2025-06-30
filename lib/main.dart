@@ -82,7 +82,10 @@ void main() async {
           ChangeNotifierProvider(create: (_) => ReportProvider()),
           ChangeNotifierProvider(create: (_) => NotificationProvider()),
           ChangeNotifierProvider(create: (_) => VideoFeedProvider()),
-          ChangeNotifierProvider(create: (_) => PostRegistryProvider()),
+          ChangeNotifierProvider(create: (_) => VideoFeedProvider()),
+          // ChangeNotifierProvider(create: (_) => PostRegistryProvider()),
+          /// Use PostRegistryProvider from service locator to avoid multi instances
+          ChangeNotifierProvider.value(value: getIt<PostRegistryProvider>()),
           ChangeNotifierProvider<ThemeProvider>(
             create: (_) => ThemeProvider(
               value ? Constants.darkTheme : Constants.lightTheme,

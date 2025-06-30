@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:socialverse/core/core.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
+import 'package:socialverse/features/videos/providers/post_registry_provider.dart';
 import '../domain/services/video_feed_service.dart';
 
 class PostState {
@@ -40,6 +41,7 @@ class VideoFeedProvider extends ChangeNotifier {
   final Map<String, PostState> _postRepliesList = {};
 
   final notification = getIt<NotificationProvider>();
+  final _postRegistry = getIt<PostRegistryProvider>();
 
   final _service = ViedoFeedService(dio: getIt<Dio>());
 
@@ -70,7 +72,16 @@ class VideoFeedProvider extends ChangeNotifier {
     try {
       final videoFeedList = await _service.fetchVideoFeed(page: 1, pageSize: 5);
 
+      final post = videoFeedList.first;
+      await _postRegistry.setActivePost(post);
+      _postRepliesList[post.id.toString()] = PostState(
+        post: post,
+        postReplies: videoFeedList.skip(1).toList(),
+      );
       _videoFeedList = videoFeedList;
+      logger.error('Posts added');
+
+      notifyListeners();
     } catch (e) {
       logger.error('Error fetching video feed: $e');
       notification.show(
@@ -108,7 +119,6 @@ class VideoFeedProvider extends ChangeNotifier {
   }
 
   Future<void> fetchPostChildren({required VideoFeedModel post}) async {
-    
     logger.error('fetchPostChildren');
     // final childPosts = List.generate(post.childVideoCount, (_) => post);
     final postId = post.id.toString();
@@ -124,13 +134,10 @@ class VideoFeedProvider extends ChangeNotifier {
         postState.copyWith(childPosts: posts);
         _postRepliesList[postId] = postState;
       } else {
-        _postRepliesList[postId] = PostState(
-          post: post,
-          childPosts: posts,
-        );
+        _postRepliesList[postId] = PostState(post: post, childPosts: posts);
       }
     } catch (e, stackTrace) {
-      logger.error({e,stackTrace});
+      logger.error({e, stackTrace});
       notification.show(
         title: 'Something went wrong',
         type: NotificationType.local,
@@ -157,10 +164,7 @@ class VideoFeedProvider extends ChangeNotifier {
         postState.copyWith(postReplies: posts);
         _postRepliesList[postId] = postState;
       } else {
-        _postRepliesList[postId] = PostState(
-          post: post,
-          postReplies: posts,
-        );
+        _postRepliesList[postId] = PostState(post: post, postReplies: posts);
       }
     } catch (e) {
       notification.show(

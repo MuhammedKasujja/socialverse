@@ -17,10 +17,10 @@ class VideoFeedTile extends StatefulWidget {
 class _VideoFeedTileState extends State<VideoFeedTile> {
   @override
   void initState() {
-    Provider.of<PostRegistryProvider>(
-      context,
-      listen: false,
-    ).setActivePost(widget.post);
+    // Provider.of<PostRegistryProvider>(
+    //   context,
+    //   listen: false,
+    // ).setActivePost(widget.post);
     // Provider.of<VideoFeedProvider>(
     //   context,
     //   listen: false,

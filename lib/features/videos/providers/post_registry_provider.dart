@@ -22,8 +22,9 @@ class PostRegistryProvider extends ChangeNotifier {
     _horizontalIndex = horizontalIndex;
   }
 
-  void setActivePost(VideoFeedModel post) {
+  Future<void> setActivePost(VideoFeedModel post) async{
     _activePost = post;
+    notifyListeners();
   }
 
   void onScroll({required VideoFeedModel video}) {
