@@ -9,6 +9,7 @@ import 'core/configs/route_generator/custom_router.dart';
 import 'export.dart';
 import 'features/videos/presentation/scroll_children_screen.dart'
     hide FourWaySwipeHandler;
+import 'features/videos/presentation/video/tree_page_view.dart';
 
 class WeMotions extends StatefulWidget {
   const WeMotions({super.key});
@@ -92,6 +93,14 @@ class FeedScrollView extends StatelessWidget {
               );
             },
             child: Text('List Inner Vertical Feed'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => TreeViewExample()),
+              );
+            },
+            child: Text('Tree'),
           ),
         ],
       ),

@@ -30,15 +30,13 @@ class _VerticalFeedListState extends State<VerticalFeedList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView.builder(
+    return  PageView.builder(
         scrollDirection: Axis.vertical,
         physics: VideoScrollPhysics(),
         itemCount: widget.posts.length,
         itemBuilder: (context, index) {
           return FourWaySwipeHandler(index: index, post: widget.posts[index]);
         },
-      ),
     );
   }
 }
@@ -72,7 +70,7 @@ class _FourWaySwipeHandlerState extends State<FourWaySwipeHandler> {
   void _setAxis(Axis axis) {
     final activePost = context.read<PostRegistryProvider>().activePost;
     // logger.info({'Change direction': activePost?.id, 'Axis': axis});
-    if (axis == Axis.vertical && !activePost!.hasReplies) return;
+    if (axis == Axis.vertical && (!activePost!.hasReplies || activePost.isGrandPost)) return;
     if (_lockedAxis != axis) {
       setState(() => _lockedAxis = axis);
       if (axis == Axis.vertical && activePost!.hasReplies) {

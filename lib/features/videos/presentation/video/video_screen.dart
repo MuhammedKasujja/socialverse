@@ -27,19 +27,21 @@ class _VideoScreenState extends State<VideoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<VideoFeedProvider>(
-      builder: (_, videoProvider, __) {
-        if (videoProvider.isLoading) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (videoProvider.hasError) {
-          return Center(child: Text(videoProvider.error!));
-        }
-        if (!videoProvider.hasVideos) {
-          return Center(child: Text('No videos found'));
-        }
-        return VerticalFeedList(posts: videoProvider.videoFeedList);
-      },
+    return Scaffold(
+      body: Consumer<VideoFeedProvider>(
+        builder: (_, videoProvider, __) {
+          if (videoProvider.isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (videoProvider.hasError) {
+            return Center(child: Text(videoProvider.error!));
+          }
+          if (!videoProvider.hasVideos) {
+            return Center(child: Text('No videos found'));
+          }
+          return VerticalFeedList(posts: videoProvider.videoFeedList);
+        },
+      ),
     );
   }
 }

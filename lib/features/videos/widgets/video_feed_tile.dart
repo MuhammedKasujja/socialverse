@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:socialverse/features/videos/domain/models/video_feed_model.dart';
 import 'package:socialverse/features/videos/providers/post_registry_provider.dart';
+import 'package:socialverse/features/videos/providers/video_feed_provider.dart';
 
 class VideoFeedTile extends StatefulWidget {
   final VideoFeedModel post;
@@ -20,6 +21,10 @@ class _VideoFeedTileState extends State<VideoFeedTile> {
       context,
       listen: false,
     ).setActivePost(widget.post);
+    // Provider.of<VideoFeedProvider>(
+    //   context,
+    //   listen: false,
+    // ).fetchPostChildren(post: widget.post);
     super.initState();
   }
 
